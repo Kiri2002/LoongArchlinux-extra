@@ -16,13 +16,13 @@ sha512sums=('09189531f097ad7b27220150dac1dae8b042c3b6cd7cf1444388d25a0fb10c1116f
 
 prepare() {
   cd $pkgname-$pkgver
-  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+#cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
   mkdir -p completions
 }
 
 build() {
   cd $pkgname-$pkgver
-  cargo build --release --frozen
+  cargo build --release #--frozen
   local _completion="target/release/$_pkgname --generate-shell-completions"
   $_completion bash > "completions/$_pkgname"
   $_completion fish > "completions/$_pkgname.fish"

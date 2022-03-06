@@ -84,14 +84,17 @@ backup=(
 source=(
   "https://libvirt.org/sources/$pkgname-$pkgver.tar.xz"{,.asc}
   https://gitlab.com/libvirt/libvirt/-/commit/4f4a8dce944e05311565b690a84f6bb1ef67c086.patch
+  libvirt-loongarch.patch
 )
 sha256sums=('cb83be795548161af6718a6db75ee40719a87bcd6f9207a3565db2fc0e53a52e'
             'SKIP'
-            'cd8e97b88cbd80fd007ba08db066d8434fd996d2fd54b193c745b916ddde8ece')
+            'SKIP'
+            'f0562941282b157e2ebba9d203c33f4f9c0f3f93562129448f7de6e5df0575fc')
 validpgpkeys=('453B65310595562855471199CA68BE8010084C9C') # Jiří Denemark <jdenemar@redhat.com>
 
 prepare() {
   cd "$pkgname-$pkgver"
+  patch -Np1 -i ../libvirt-loongarch.patch
 
   sed -i 's|/sysconfig/|/conf.d/|g' \
     src/remote/libvirtd.service.in \
@@ -190,4 +193,13 @@ package_libvirt-storage-iscsi-direct() {
   backup=()
 
   install -Dv -t "$pkgdir/usr/lib/libvirt/storage-backend" "$pkgdir/../libvirt_storage_backend_iscsi-direct.so"
+}
+
+package_libvirt-storage-rbd() {
+  pkgdesc="Libvirt RBD storage backend"
+  depends=("libvirt=$pkgver")
+  optdepends=()
+  backup=()
+
+  install -Dv -t "$pkgdir/usr/lib/libvirt/storage-backend" "$pkgdir/../libvirt_storage_backend_rbd.so"
 }

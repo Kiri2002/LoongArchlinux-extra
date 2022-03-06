@@ -42,15 +42,19 @@ provides=(python-archinstall)
 source=(
   $pkgname-v$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz
   $pkgname-v$pkgver.tar.gz.sig::$url/releases/download/v$pkgver/$pkgname-$pkgver.tar.gz.sig
+  archinstall-la64-2.6.3.patch
 )
 sha512sums=('0ac564a9ae5f4b28d67d7cac1408125a5af21aeaae1ad256082650824a2b5c63685244576a3cac1fd03246b68914ed4bcd759627d8f818a04137fbc4ca7d1a0d'
-            'SKIP')
+            'SKIP'
+            'bba2c25733ab266f2b848f2e569dc6b03a0dd9e844cdb976a16fe0190145c6d7858b6530fd0ac9785579968f43fba0e9037802b62d160b98832076e09f5376df')
 b2sums=('c91b6d25a49784c532c526151ced16af8b584f1372f7792de3e7caa882ba61caf4b5dcedbe1b0c2646f6fbd077a566ecb08aeef274086bd436b3f7cfdff4783c'
-        'SKIP')
+        'SKIP'
+        'ed1717d1f5649383bc15db231636181a135857da3ec4f51d2e559b7af402c4013ba6e0daa0d5af154ca00f3fea15a88c11e97b8c9060a867345cb361b2b8151b')
 validpgpkeys=('8AA2213C8464C82D879C8127D4B58E897A929F2E') # torxed@archlinux.org
 
 prepare() {
   cd $pkgname-$pkgver
+  patch -p1 -i $srcdir/archinstall-la64-2.6.3.patch
 }
 
 build() {

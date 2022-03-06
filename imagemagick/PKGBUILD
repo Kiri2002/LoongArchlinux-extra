@@ -63,7 +63,7 @@ makedepends=(chrpath
 checkdepends=(gsfonts
               ttf-dejavu)
 replaces=(imagemagick-doc)
-source=(https://imagemagick.org/archive/$_tarname.tar.xz{,.asc}
+source=(https://imagemagick.org/archive/releases/$_tarname.tar.xz{,.asc}
         arch-fonts.diff)
 sha256sums=('1e44faec8bf603e8c894a7c039fb1b4bb83dc0c429c79c74577e73ceefe4a238'
             'SKIP'
@@ -97,7 +97,7 @@ build() {
     --enable-opencl \
     --without-gslib \
     --with-djvu \
-    --with-fftw \
+    --without-fftw \
     --with-jxl \
     --with-lqr \
     --with-modules \

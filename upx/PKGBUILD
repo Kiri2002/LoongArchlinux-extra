@@ -22,12 +22,14 @@ source=(
   git+$url-vendor-valgrind#commit=f86c669e0112e5cf88027264eb6be8c4921a512a
   git+$url-vendor-zlib#commit=29fceaffe38ef80e404bfa92a47b192b6e887d15
   "git+$url#commit=d14fa5f8a410da566f61bb1ca49cb2157b54ed93") # tag: v4.2.1
+source+=(0001-just-for-la64-build.patch)
 b2sums=('SKIP'
         'SKIP'
         'SKIP'
         'SKIP'
         'SKIP'
         'SKIP')
+b2sums+=('0ea1b7a64155d135bfd8872969e1003b72d4b098512f1bc89d31244e02ffc901cc8c5bd87eb63a529aadf161386cd857cc6271a8ea018ba3915616c3c2fe5c72')
 
 prepare() {
   cd $pkgname
@@ -35,6 +37,7 @@ prepare() {
   for x in doctest lzma-sdk ucl valgrind zlib; do
     rm -frv vendor/$x && ln -s "$srcdir/upx-vendor-$x" vendor/$x
   done
+  patch -p1 -i $srcdir/0001-just-for-la64-build.patch
 }
 
 build() {

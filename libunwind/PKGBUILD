@@ -23,6 +23,7 @@ provides=(
 )
 source=(
   https://github.com/libunwind/libunwind/releases/download/v$pkgver/libunwind-$pkgver.tar.gz{,.asc}
+  "libunwind-la64.patch"
 )
 b2sums=('519570a02d06ce4a174ca226941e493499054112de1c92938434e9fb56fabc8446f699a886ea8beee672ac5e28acd03d16169257a43e2ee1bab084fb331ef4cf'
         'SKIP')
@@ -34,6 +35,11 @@ prepare() {
   cd libunwind-$pkgver
 }
 
+prepare() {
+	cd "$pkgname-$pkgver"
+  patch -p1 -i $srcdir/libunwind-la64.patch
+}
+
 build() {
   local configure_options=(
     --prefix=/usr
@@ -42,6 +48,7 @@ build() {
   )
 
   cd libunwind-$pkgver
+  autoreconf -ifv
   ./configure "${configure_options[@]}"
   sed -i -e 's/ -shared / -Wl,-O1,--as-needed\0/g' libtool
   make

@@ -17,7 +17,7 @@ depends=(
   systemd
 )
 makedepends=(
-  pandoc-cli
+#  pandoc-cli
   python-build
   python-installer
   python-setuptools
@@ -60,17 +60,17 @@ b2sums=('c97a0a2139c036b727d0cdd6686a7fa5393f62357d87b988f0a1a473367eb552de1ed6f
 build() {
   cd $pkgname-$pkgver
   python -m build --wheel --no-isolation
-  pandoc -t man -s -o $pkgname/resources/$pkgname.1 $pkgname/resources/$pkgname.md
+#  pandoc -t man -s -o $pkgname/resources/$pkgname.1 $pkgname/resources/$pkgname.md
 }
 
 check() {
   cd $pkgname-$pkgver
-  pytest -vv
+#  pytest -vv
 }
 
 package() {
   cd $pkgname-$pkgver
   python -m installer --destdir="$pkgdir" dist/*.whl
-  install -vDm 644 $pkgname/resources/$pkgname.1 -t "$pkgdir/usr/share/man/man1/"
+#  install -vDm 644 $pkgname/resources/$pkgname.1 -t "$pkgdir/usr/share/man/man1/"
   install -vDm 644 docs/*.md {NEWS,README}.md -t "$pkgdir/usr/share/doc/$pkgname/"
 }

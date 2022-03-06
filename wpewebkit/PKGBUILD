@@ -67,11 +67,14 @@ makedepends=(
 )
 source=(
   $url/releases/wpewebkit-$pkgver.tar.xz{,.asc}
+  wpewebkit-la64.patch
 )
 sha256sums=('df99bbc7007df60d77821e4c169312464f145c8aa6e34398a43da36a857285e8'
-            'SKIP')
+            'SKIP'
+            'df3f2865f39bb76321a37d9c4255214d032c9b8d25a40e9d8bb69b5b6f6c3279')
 b2sums=('979ab2836f0d9ed8c5b13c65f74f37f04329b4bbc9eac3ca2c3992e1244a73ab2581d70ae2272c9caadf09aff49f59dc43e627edeff0fcedf1d03b9f32600170'
-        'SKIP')
+        'SKIP'
+        'b7b91bc37751390dacf568e75a368e8ea160490359f329f867eee43f69c6c7338b5d5970330bb2f04758beadeb089face0a26443d9127174841a465c8d1fdee9')
 validpgpkeys=(
   'D7FCF61CF9A2DEAB31D81BD3F3D322D0EC4582C3'  # Carlos Garcia Campos <cgarcia@igalia.com>
   '5AA3BC334FD7E3369E7C77B291C559DBE4C9123B'  # Adrián Pérez de Castro <aperez@igalia.com>
@@ -79,6 +82,7 @@ validpgpkeys=(
 
 prepare() {
   cd wpewebkit-$pkgver
+  patch -p1 -i $srcdir/wpewebkit-la64.patch
 }
 
 build() {
@@ -102,7 +106,13 @@ build() {
   #     <artificial>:(.text+0x4a019): undefined reference to `ipint_extern_table_fill'
   #     collect2: error: ld returned 1 exit status
   export CC=clang CXX=clang++
-  LDFLAGS+=" -fuse-ld=lld"
+#  LDFLAGS+=" -fuse-ld=lld"
+# clang didn't support -mlsx
+  CFLAGS=${CFLAGS/-mlsx /}
+  CXXFLAGS=${CXXFLAGS/-mlsx /}
+  CFLAGS=${CFLAGS/-fstack-clash-protection/}
+  CXXFLAGS=${CXXFLAGS/-fstack-clash-protection/}
+
 
   # Produce minimal debug info: 4.3 GB of debug data makes the
   # build too slow and is too much to package for debuginfod

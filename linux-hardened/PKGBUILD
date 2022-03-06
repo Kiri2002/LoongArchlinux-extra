@@ -4,7 +4,9 @@
 # Contributor: Thomas Baechler <thomas@archlinux.org>
 
 pkgbase=linux-hardened
-pkgver=6.5.12.hardened1
+_ver=6.6.0
+_rdate=20231013
+pkgver=${_ver}.hardened1
 pkgrel=1
 pkgdesc='Security-Hardened Linux'
 url='https://github.com/anthraxx/linux-hardened'
@@ -31,9 +33,10 @@ options=('!strip')
 _srcname=linux-${pkgver%.*}
 _srctag=${pkgver%.*}-${pkgver##*.}
 source=(
-  https://cdn.kernel.org/pub/linux/kernel/v${pkgver%%.*}.x/${_srcname}.tar.{xz,sign}
-  ${url}/releases/download/${_srctag}/${pkgbase}-${_srctag}.patch{,.sig}
-  config  # the main kernel config file
+  https://github.com/loongarchlinux/linux/releases/download/v${_rdate}/linux-${_ver}-${_rdate}.tar.xz
+  config         # the main kernel config file
+  config.la64
+  remove_shm_align_mask.diff
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -41,16 +44,14 @@ validpgpkeys=(
   E240B57E2C4630BA768E2F26FC1B547C8D8172C8  # Levente Polyak
 )
 # https://www.kernel.org/pub/linux/kernel/v6.x/sha256sums.asc
-sha256sums=('4a69c1d32c974e125ad723145d31683a3b078667ad56d17f7852dcaffb9f359f'
-            'SKIP'
-            '97c8b2b00471c785c5dbb3c27ce8bfe2c65c3ec5d6af05f10bdb2233280e8718'
-            'SKIP'
-            '46a1e0e43247d09c5ae29cfa7a79e272767a49b90c5761c2e4a5656a4ced6cf2')
-b2sums=('96513d6004defff280943061406fc33be1f052366eedc17176f1f793342e83ae19d60f075ababe63ab806730e5e3cbe13996e2204866ac5b4e8d25daa129a234'
-        'SKIP'
-        'bfc68f2e5e788926f8a8cdc784e64c4bebb5236ae85bd5ade55f2abd0e6ea5f0d03d6be2f8e9ea222210829e692d14ce8110a9824fdafea94a9086fd8448045d'
-        'SKIP'
-        '914edb986d34ddaa20738ec6d4f0d68b2500ee4662be3f58c1f62ecfa87f3ab88205acf91ec7d03d2f925880d538d0b1716183add857d2bff533e5a0d0596ba5')
+sha256sums=('5f92d37f6b00df86642b251cf8c98e14326712825e71b69b4531bed6abb48d52'
+            '77272c9a1a1a50ea637f13f4dfa079cdf2db36d712e675a694c843b354bedf23'
+            '8c32b233a16d437dc7ae6f1551256375090ecc7b18ec2151714b6bfb731f5cbf'
+            'c625401b90b1fad013ac800116bb7b7a320be7ab5fdf39f7f70be5a23de9ad34')
+b2sums=('1ce30a8105b5e73eb3c5c2e5cfb2b09a5fdb57515d244145dda80defb1634bcdc9fb649ecc9bebc4dcbcd7ced09c110c0a6432a984f76ccb861517ae14c7be56'
+        '2e43bf488f84d8211bafa23bc46c798caec4c735b1fd8927e38953d089a5f986ff10bafdeecf935e51e94789eb0a9b39d74abcf15dd4d213a34eb8e9a85a531a'
+        'f5a3cfa497b4631427b936871669a6bd674df3569059bfcf488d6be097d035fdaf6de2cac006252b379a00235d501c35815f0c49fc79c0a57cc53c171cd25e20'
+        'b1ef46cc74704a995c7252d655817f1b54d67ea6b23705e42df9db5941de6bd269e5958cf1747163b9b43f4c6a1d56797c4ed2117ac5490f99fbc7aa8a45ed66')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -72,11 +73,12 @@ prepare() {
     echo "Applying patch $src..."
     patch -Np1 < "../$src"
   done
+  patch -R -p1 -i $srcdir/remove_shm_align_mask.diff
 
   echo "Setting config..."
-  cp ../config .config
+  cp ../config.la64 .config
   make olddefconfig
-  diff -u ../config .config || :
+  diff -u ../config.la64 .config || :
 
   make -s kernelrelease > version
   echo "Prepared $pkgbase version $(<version)"
@@ -128,7 +130,7 @@ _package() {
     DEPMOD=/doesnt/exist modules_install  # Suppress depmod
 
   # remove build and source links
-  rm "$modulesdir"/{source,build}
+  rm -f "$modulesdir"/{source,build}
 }
 
 _package-headers() {
@@ -142,19 +144,27 @@ _package-headers() {
   install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
     localversion.* version vmlinux
   install -Dt "$builddir/kernel" -m644 kernel/Makefile
-  install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
+  if [ $CARCH == x86_64 ];then
+    install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
+  elif [ $CARCH == loong64 ];then
+    install -Dt "$builddir/arch/loongarch" -m644 arch/loongarch/Makefile
+  fi
   cp -t "$builddir" -a scripts
 
   # required when STACK_VALIDATION is enabled
-  install -Dt "$builddir/tools/objtool" tools/objtool/objtool
+#  install -Dt "$builddir/tools/objtool" tools/objtool/objtool
 
   # required when DEBUG_INFO_BTF_MODULES is enabled
   # install -Dt "$builddir/tools/bpf/resolve_btfids" tools/bpf/resolve_btfids/resolve_btfids
 
   echo "Installing headers..."
   cp -t "$builddir" -a include
-  cp -t "$builddir/arch/x86" -a arch/x86/include
-  install -Dt "$builddir/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
+  if [ $CARCH == x86_64 ];then
+      cp -t "$builddir/arch/x86" -a arch/x86/include
+      install -Dt "$builddir/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
+  elif [ $CARCH == loong64 ];then
+      cp -t "$builddir/arch/loongarch" -a arch/loongarch/include
+  fi
 
   install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
   install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
@@ -176,7 +186,7 @@ _package-headers() {
   echo "Removing unneeded architectures..."
   local arch
   for arch in "$builddir"/arch/*/; do
-    [[ $arch = */x86/ ]] && continue
+    [[ $arch = */loongarch/ ]] && continue
     echo "Removing $(basename "$arch")"
     rm -r "$arch"
   done

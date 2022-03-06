@@ -26,6 +26,11 @@ validpgpkeys=(265F80AB84FE03127E14F01125BCCA5220D84079  # Krisztian Szucs (apach
 build(){
   CC=clang \
   CXX=clang++ \
+# clang didn't support -mlsx
+  CFLAGS=${CFLAGS/-mlsx /}
+  CXXFLAGS=${CXXFLAGS/-mlsx /}
+  CFLAGS=${CFLAGS/-fstack-clash-protection/}
+  CXXFLAGS=${CXXFLAGS/-fstack-clash-protection/}
   cmake \
     -B build -S apache-${pkgname}-${pkgver}/cpp \
     -DCMAKE_INSTALL_PREFIX="/usr" \

@@ -12,8 +12,10 @@ license=('APACHE')
 makedepends=(cmake git)
 provides=("vulkan-hpp=${pkgver}")
 groups=(vulkan-devel)
-source=("${pkgname}-${pkgver}.tar.gz::https://github.com/KhronosGroup/Vulkan-Headers/archive/v${pkgver}.tar.gz")
-sha256sums=('1637f36a023bd148315f66efb7974861adf22cd1f6d690bdf00ee15ce91d5367')
+source=("${pkgname}-${pkgver}.tar.gz::https://github.com/KhronosGroup/Vulkan-Headers/archive/v${pkgver}.tar.gz"
+        vulkan_hpp_macros.hpp)
+sha256sums=('1637f36a023bd148315f66efb7974861adf22cd1f6d690bdf00ee15ce91d5367'
+            'f04edce292c8a6971c058ce98015ceae7d1efc184213a468cb679293900e1fe3')
 
 build() {
   cd Vulkan-Headers*

@@ -26,15 +26,18 @@ optdepends=('clang: for qdoc and lupdate'
 groups=(qt6)
 _pkgfn=${pkgname/6-/}-everywhere-src-$_qtver
 source=(https://download.qt.io/official_releases/qt/${pkgver%.*}/$_qtver/submodules/$_pkgfn.tar.xz
-        zstd-target.patch)
+        zstd-target.patch
+        qt6-tools-fix-build.patch)
 sha256sums=('4e9feebc142bbb6e453e1dc3277e09ec45c8ef081b5ee2a029e6684b5905ba99'
-            '876b46461670d21b07d0e6a2ea53311d3c16be9e6fc3746f52b74e687f4eac8b')
+            '876b46461670d21b07d0e6a2ea53311d3c16be9e6fc3746f52b74e687f4eac8b'
+            '8cced47330d1fed71e10248b4c587c0bac1cf6245b8149d2166d95de55b7cef8')
 
 prepare() {
 # Fix build with system litehtml
   sed -e '/qt_internal_set_exceptions_flags/d' -e '/qt_disable_warnings/d' -i $_pkgfn/src/assistant/CMakeLists.txt
 # https://bugreports.qt.io/browse/QTBUG-117145
   patch -d $_pkgfn -p1 < zstd-target.patch
+  patch -d $_pkgfn -p1 -i $srcdir/qt6-tools-fix-build.patch
 }
 
 build() {

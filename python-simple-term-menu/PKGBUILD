@@ -16,11 +16,19 @@ makedepends=(
 checkdepends=()
 optdepends=()
 source=("https://pypi.python.org/packages/source/s/simple-term-menu/simple-term-menu-${pkgver}.tar.gz")
+source+=(cjk-preview.patch)
 sha512sums=('58dbbc0c01d8b16d12d546568373f88c580c365c7e175b553656a27fc58ceddd608435a2976ee9654e451f9cb76fcd590e37e3417cee3ebaf72c6ebf48d79452')
+sha512sums+=('0d7d6366a01a4264f0d4061835998beb9d4fd1cd5bb0ca7c59230c3876def7192210984d208583df5b1ad28df22c27836066886c8926e6e28bb98f082127b4fb')
 b2sums=('b38b04a7ba34c0cc95bfd2ae990bd6472f663d819a7362f8fec9dcdb0c59d8aa21da49a78b32739b8ebbbc83c655d92a259af545f5d1d82920b533bf387d343b')
+b2sums+=('027d66daec14cb96081cfa840e5da9d8c4394f0767f9e759fe6596d024aa0e61c234a8e467d6d8b27e66fa54a8c7d7237ea19adeb3f5ce7ca0f83816d78cd463')
 
 pkgver() {
   echo $pkgver
+}
+
+prepare() {
+  cd "simple-term-menu-$pkgver"
+  patch -p1 -i $srcdir/cjk-preview.patch
 }
 
 build() {

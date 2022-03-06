@@ -14,7 +14,13 @@ sha512sums=('b592d3a80e703ef9a31eb541cdab2de1f393f1959384f1c126907c729882d0387cc
 
 build() {
   cd "$srcdir/$pkgname-$pkgver"
-  cargo build --release --locked
+  find -name Cargo.lock -exec rm -f {} \;
+  mkdir -p .cargo
+  cat > .cargo/config.toml <<EOF
+[source.crates-io]
+registry = "https://gitee.com/yetist/crates.io-index"
+EOF
+  cargo build --release
 }
 
 package() {

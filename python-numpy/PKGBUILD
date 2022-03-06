@@ -2,6 +2,7 @@
 # Contributor: Jan de Groot <jgc@archlinux.org>
 # Contributor: Douglas Soares de Andrade <dsa@aur.archlinux.org>
 # Contributor: Angel 'angvp' Velasquez <angvp[at]archlinux.com.ve> 
+set -x
 
 pkgname=python-numpy
 pkgver=1.26.2
@@ -14,8 +15,15 @@ depends=('cblas' 'lapack' 'python')
 optdepends=('blas-openblas: faster linear algebra')
 makedepends=('python-build' 'python-installer' 'meson-python' 'cmake' 'gcc-fortran' 'cython')
 checkdepends=('python-pytest' 'python-hypothesis')
-source=("https://github.com/numpy/numpy/releases/download/v$pkgver/numpy-$pkgver.tar.gz")
-sha512sums=('9986cd34dda921fbc152c3be0e39f003035787ea1e055452b9259d02c423d413080a0c7e4e19fd38d9e28f66d428719d6ebe784c24ae17249ff56494950daf4b')
+source=("https://github.com/numpy/numpy/releases/download/v$pkgver/numpy-$pkgver.tar.gz"
+        "add-loongarch-support.patch")
+sha512sums=('9986cd34dda921fbc152c3be0e39f003035787ea1e055452b9259d02c423d413080a0c7e4e19fd38d9e28f66d428719d6ebe784c24ae17249ff56494950daf4b'
+            '06e4ec4f893e29d78156b4e8acaa5294b8340926b7d67f4b9f5d29113a404cf23b7c048f9d64de8a5907f7181306e50768546e64f1b53d038685d00a58e9c93a')
+
+prepare() {
+  cd numpy-$pkgver
+  patch -p1 -i "$srcdir/add-loongarch-support.patch"
+}
 
 build() {
   cd numpy-$pkgver
