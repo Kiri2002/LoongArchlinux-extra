@@ -19,7 +19,6 @@ options=('!emptydirs')
 source=("https://downloads.sourceforge.net/project/stardict-4/$pkgver/$pkgname-$pkgver-2-src.7z"
         'mariadb.patch')
 sha256sums=('d766f4efb1ae868855a47f39b2def66dd7a3232ca54c651c9cb3327b1bec50ea'
-            '5be4d0468f6089b760924a5d25030110ca62869b4611afb46a411cd4eb59b832'
             'f66b916c358bddf48fcb91a7d0190a7109fe92a1388ec982c47dfa9ac1ee69cf')
 
 prepare() {
