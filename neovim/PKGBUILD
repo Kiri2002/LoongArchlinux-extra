@@ -13,7 +13,7 @@ backup=('etc/xdg/nvim/sysinit.vim')
 license=('custom:neovim')
 provides=('vim-plugin-runtime')
 depends=('libtermkey' 'libuv' 'msgpack-c' 'unibilium' 'libvterm>0.1.4' 'luajit' 'libluv' 'tree-sitter')
-makedepends=('cmake' 'git' 'ninja' 'lua51-mpack' 'lua51-lpeg' 'unzip')
+makedepends=('cmake' 'git' 'ninja' 'lua51-bitop' 'lua51-mpack' 'lua51-lpeg' 'unzip')
 optdepends=('python-pynvim: for Python plugin support (see :help python)'
             'xclip: for clipboard support on X11 (or xsel) (see :help clipboard)'
             'xsel: for clipboard support on X11 (or xclip) (see :help clipboard)'
