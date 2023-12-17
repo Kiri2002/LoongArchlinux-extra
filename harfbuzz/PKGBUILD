@@ -44,7 +44,6 @@ pkgver() {
 
 prepare() {
   cd harfbuzz
-  patch -p1 -i $srcdir/harfbuzz-fix-build.patch
 }
 
 build() {
