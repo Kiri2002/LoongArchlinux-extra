@@ -13,8 +13,15 @@ url="https://www.openblas.net/"
 license=('BSD')
 depends=('gcc-libs')
 makedepends=('cmake' 'perl' 'gcc-fortran')
-source=(${_pkgname}-v${pkgver}.tar.gz::https://github.com/xianyi/OpenBLAS/archive/v${pkgver}.tar.gz)
-sha512sums=('fe66e3a258ca1720764ed243f6d61017d6ef14bd33b76f20b19b34754096ec2be9fbeb1a78743f38ee71381746d6af9a1c16a8f3982e423afec422fcb50852d0')
+source=(${_pkgname}-v${pkgver}.tar.gz::https://github.com/xianyi/OpenBLAS/archive/v${pkgver}.tar.gz
+fix-loong.patch)
+sha512sums=('fe66e3a258ca1720764ed243f6d61017d6ef14bd33b76f20b19b34754096ec2be9fbeb1a78743f38ee71381746d6af9a1c16a8f3982e423afec422fcb50852d0'
+            'e051174a56d957ec15534d88343d984ac2c5a1ec93bf07fe8b6836cce4f204646f1b485e3fbc6ffe3106a58531efab75e9484430d8dd7ea573274c09e5b636b7')
+
+prepare() {
+	cd "$_pkgname-$pkgver"
+	patch -p1 -i "$srcdir/fix-loong.patch"
+}
 
 build() {
   # Setting FC manually to avoid picking up f95 and breaking the cmake build
