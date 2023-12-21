@@ -1,6 +1,23 @@
---- OpenBLAS-0.3.24/cmake/cc.cmake	2023-12-20 09:44:56.000000000 +0800
-+++ OpenBLAS-0.3.24/cmake/cc.cmake	2023-12-20 09:50:15.283053620 +0800
-@@ -36,9 +36,9 @@
+diff --git a/.github/workflows/loongarch64.yml b/.github/workflows/loongarch64.yml
+index 4a9bf98b6..b310d6938 100644
+--- a/.github/workflows/loongarch64.yml
++++ b/.github/workflows/loongarch64.yml
+@@ -40,8 +40,8 @@ jobs:
+ 
+       - name: Download and install loongarch64-toolchain
+         run: |
+-          wget https://github.com/loongson/build-tools/releases/download/2022.09.06/loongarch64-clfs-7.3-cross-tools-gcc-glibc.tar.xz
+-          tar -xf loongarch64-clfs-7.3-cross-tools-gcc-glibc.tar.xz -C /opt
++          wget https://github.com/loongson/build-tools/releases/download/2023.08.08/CLFS-loongarch64-8.1-x86_64-cross-tools-gcc-glibc.tar.xz
++          tar -xf CLFS-loongarch64-8.1-x86_64-cross-tools-gcc-glibc.tar.xz -C /opt
+ 
+       - name: Set env
+         run: |
+diff --git a/cmake/cc.cmake b/cmake/cc.cmake
+index 00952e810..242b03b5f 100644
+--- a/cmake/cc.cmake
++++ b/cmake/cc.cmake
+@@ -36,9 +36,9 @@ if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "LS
  
      if (LOONGARCH64)
        if (BINARY64)
@@ -12,20 +29,11 @@
        endif ()
        set(BINARY_DEFINED 1)
      endif ()
---- OpenBLAS-0.3.24/Makefile.system	2023-12-20 09:52:09.000000000 +0800
-+++ OpenBLAS-0.3.24/Makefile.system	2023-12-20 10:00:34.239841995 +0800
-@@ -940,7 +940,7 @@
- ifeq ($(ARCH), loongarch64)
- LA64_ABI=$(shell $(CC) -mabi=lp64d -c $(TOPDIR)/cpuid_loongarch64.c -o /dev/null > /dev/null 2> /dev/null && echo lp64d)
- ifneq ($(LA64_ABI), lp64d)
--LA64_ABI=lp64
-+LA64_ABI=lp64d
- endif
- CCOMMON_OPT += -march=loongarch64 -mabi=$(LA64_ABI)
- FCOMMON_OPT += -march=loongarch64 -mabi=$(LA64_ABI)
---- OpenBLAS-0.3.24/cmake/fc.cmake	2023-12-20 10:04:35.168171539 +0800
-+++ OpenBLAS-0.3.24/cmake/fc.cmake	2023-12-20 10:04:05.596130715 +0800
-@@ -61,9 +61,9 @@
+diff --git a/cmake/fc.cmake b/cmake/fc.cmake
+index c496f6368..b356dfda3 100644
+--- a/cmake/fc.cmake
++++ b/cmake/fc.cmake
+@@ -61,9 +61,9 @@ if (${F_COMPILER} STREQUAL "GFORTRAN" OR ${F_COMPILER} STREQUAL "F95" OR CMAKE_F
      endif ()
      if (LOONGARCH64)
        if (BINARY64)

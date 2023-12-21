@@ -16,7 +16,7 @@ makedepends=('cmake' 'perl' 'gcc-fortran')
 source=(${_pkgname}-v${pkgver}.tar.gz::https://github.com/xianyi/OpenBLAS/archive/v${pkgver}.tar.gz
 fix-loong.patch)
 sha512sums=('fe66e3a258ca1720764ed243f6d61017d6ef14bd33b76f20b19b34754096ec2be9fbeb1a78743f38ee71381746d6af9a1c16a8f3982e423afec422fcb50852d0'
-            'e051174a56d957ec15534d88343d984ac2c5a1ec93bf07fe8b6836cce4f204646f1b485e3fbc6ffe3106a58531efab75e9484430d8dd7ea573274c09e5b636b7')
+            '195dc3c3daa56c55912831161bd9e73532c1a06b38c894a6eceb8d49befddda1b94e71dcd36e1d3403e2e5f70ded83febdee493059b16adc85ea52fb32e58f81')
 
 prepare() {
 	cd "$_pkgname-$pkgver"
