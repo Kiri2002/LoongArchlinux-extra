@@ -3,7 +3,8 @@
 # Maintainer: Frederik Schwan <freswa at archlinux dot org>
 # Contributor: Mirco Tischler <mt-ml at gmx dot de>
 
-pkgname=(fwupd fwupd-docs)
+#pkgname=(fwupd fwupd-docs)
+pkgname=(fwupd)
 pkgver=1.9.9
 pkgrel=1
 pkgdesc="Simple daemon to allow session software to update firmware"
@@ -78,7 +79,7 @@ build() {
     -D plugin_amdgpu=disabled \
     -D plugin_msr=disabled \
     -D launchd=disabled \
-    -D plugin_intel_spi=true \
+    -D plugin_intel_spi=false \
     -D supported_build=enabled \
     -D efi_binary=false \
     -D systemd_unit_user=fwupd
@@ -126,7 +127,7 @@ package_fwupd() {
 #  rm "${pkgdir}"/usr/lib/modules-load.d/fwupd-msr.conf
 #  rmdir "${pkgdir}"/usr/lib/modules-load.d
 
-  _pick docs "${pkgdir}"/usr/share/doc/{,fwupd/}{libfwupdplugin,libfwupd}
+#  _pick docs "${pkgdir}"/usr/share/doc/{,fwupd/}{libfwupdplugin,libfwupd}
 }
 
 package_fwupd-docs() {
