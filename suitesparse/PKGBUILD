@@ -24,6 +24,8 @@ build() {
   cd SuiteSparse-$pkgver
   CXXFLAGS=${CXXFLAGS/-mlsx /}
   CXXFLAGS=${CXXFLAGS/-fstack-clash-protection/}
+
+  CFLAGS+=" -ffat-lto-objects -mcmodel=extreme" \
   CXXFLAGS+=" -ffat-lto-objects -mcmodel=extreme" \
   CMAKE_OPTIONS="-DBLA_VENDOR=Generic \
                  -DCMAKE_INSTALL_PREFIX=/usr \

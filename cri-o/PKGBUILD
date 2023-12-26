@@ -30,6 +30,7 @@ makedepends=(
   libassuan
   libseccomp
   ostree
+  git
 )
 optdepends=(
   'apparmor: for apparmor integration'

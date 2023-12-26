@@ -15,7 +15,7 @@ sha256sums=('c5ff234f799b7ca8bc9ae5719333366cc15a7a70284a19503ae925a0a48f3f04')
 
 prepare() {
   cd "$pkgname-$pkgver"
-  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+  cargo fetch --locked --target "`uname -m`-unknown-linux-gnu"
 }
 
 build() {

@@ -25,14 +25,14 @@ prepare() {
   cd rustls-ffi-${pkgver}
   [ ! -e Cargo.lock ] # remove Cargo.lock from source= after next release
   cp ../Cargo.lock .
-  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+  cargo fetch --locked --target "`uname -m`-unknown-linux-gnu"
   patch -Np1 -i ../shared-linking.patch
 }
 
 build() {
   cd rustls-ffi-${pkgver}
   RUSTC_BOOTSTRAP=1 cargo cbuild --release --frozen --prefix=/usr
-  patchelf --set-soname "librustls.so.${pkgver}" "target/$CARCH-unknown-linux-gnu/release/librustls.so"
+  patchelf --set-soname "librustls.so.${pkgver}" "target/`uname -m`-unknown-linux-gnu/release/librustls.so"
 }
 
 package() {

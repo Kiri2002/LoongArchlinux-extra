@@ -47,7 +47,7 @@ prepare() {
 
   git -c protocol.file.allow=always submodule update --init --recursive
   sed -i 's/"vendored-fonts", //' wezterm-gui/Cargo.toml
-  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+  cargo fetch --locked --target "`uname -m`-unknown-linux-gnu"
 }
 
 build() {

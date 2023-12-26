@@ -14,7 +14,7 @@ b2sums=('ace1c42f8e5afc6746e7f66a515b8fb0fd534b843ed6d76cd85604b293e8134cac1ce13
 
 prepare() {
   cd rink-$pkgver
-  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+  cargo fetch --locked --target "`uname -m`-unknown-linux-gnu"
 }
 
 build() {

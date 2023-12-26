@@ -17,7 +17,7 @@ sha256sums=('a728ad6b6e18abe27ca2190983bedca719e46462007e61bedbc50fc9d15b89a5')
 
 prepare() {
   cd "$pkgname-$pkgver"
-  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+  cargo fetch --locked --target "`uname -m`-unknown-linux-gnu"
   mkdir completions
 }
 

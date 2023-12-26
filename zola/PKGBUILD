@@ -16,7 +16,7 @@ sha256sums=('471238f38076803cb2af1c53cf418280ae51694fbcc2e547da3f6715a718c750')
 
 prepare() {
   cd zola-$pkgver
-  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+  cargo fetch --locked --target "`uname -m`-unknown-linux-gnu"
 }
 
 build() {

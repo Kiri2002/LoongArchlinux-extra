@@ -26,7 +26,7 @@ b2sums=('e4cdfb68eaf542ae8783735ca1ae40b30c2fde4e97c08583e5dcd1afcdd21494176e60a
 
 prepare() {
   cd $pkgname-v$pkgver
-  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+  cargo fetch --locked --target "`uname -m`-unknown-linux-gnu"
 }
 
 build() {

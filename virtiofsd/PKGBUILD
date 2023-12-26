@@ -27,7 +27,7 @@ prepare() {
   # use /usr/lib instead of /usr/libexec: https://gitlab.com/virtio-fs/virtiofsd/-/issues/86
   sed 's/libexec/lib/' -i 50-qemu-$pkgname.json
 
-#  cargo fetch  --target "$CARCH-unknown-linux-gnu"
+#  cargo fetch  --target "`uname -m`-unknown-linux-gnu"
 }
 
 build() {

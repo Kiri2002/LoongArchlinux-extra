@@ -55,6 +55,11 @@ build() {
     -S $pkgname
     -W no-dev
   )
+# clang didn't support -mlsx
+  CFLAGS=${CFLAGS/-mlsx /}
+  CXXFLAGS=${CXXFLAGS/-mlsx /}
+  CFLAGS=${CFLAGS/-fstack-clash-protection/}
+  CXXFLAGS=${CXXFLAGS/-fstack-clash-protection/}
 
   cmake "${cmake_options[@]}"
   cmake --build build --verbose

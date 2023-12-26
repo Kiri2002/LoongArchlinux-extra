@@ -51,7 +51,7 @@ prepare() {
 
   cp config.mk.in  config.mk
   [ "${CARCH}" = 'x86_64' ] && echo 'CFLAGS_SHLIB = -fPIC' >> config.mk
-  [ "${CARCH}" = 'loongarch64' ] && echo 'CFLAGS_SHLIB = -fPIC' >> config.mk
+  [ "${CARCH}" = 'loong64' ] && echo 'CFLAGS_SHLIB = -fPIC' >> config.mk
   echo "NETPBM_DOCURL = file://${srcdir}/doc" >> config.mk
   echo 'TIFFLIB = libtiff.so' >> config.mk
   echo 'JPEGLIB = libjpeg.so' >> config.mk

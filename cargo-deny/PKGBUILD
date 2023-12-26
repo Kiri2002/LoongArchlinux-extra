@@ -25,7 +25,7 @@ prepare() {
   git config submodule."tests/advisory-db/github.com-2f857891b7f43c59".url "${srcdir}/${pkgname}-advisory-db"
   git config submodule."tests/advisory-db/github.com-c373669cccc50ac0".url "${srcdir}/${pkgname}-test-advisory-db"
   git -c protocol.file.allow=always submodule update --init --recursive
-  cargo fetch --locked --target "$CARCH-unknown-linux-gnu"
+  cargo fetch --locked --target "`uname -m`-unknown-linux-gnu"
 }
 
 build() {

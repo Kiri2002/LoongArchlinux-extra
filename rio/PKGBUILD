@@ -25,7 +25,7 @@ sha512sums=('077fa0a422cd4bf800adb27553c70f38ebf4d6d776cb4a7cf48b662e361c16d459d
 
 prepare() {
   cd "${pkgbase}-${pkgver}"
-  cargo fetch --locked --target "${CARCH}-unknown-linux-gnu"
+  cargo fetch --locked --target "`uname -m`-unknown-linux-gnu"
 }
 
 build() {
