@@ -11,8 +11,10 @@ depends=(gcc-libs libjpeg)
 makedepends=(cmake git)
 # Version required by libavif
 _commit=464c51a0353c71f08fe45f683d6a97a638d47833
-source=(git+${url}#commit=${_commit})
-sha512sums=(SKIP)
+source=(git+${url}#commit=${_commit}
+    libyuv-m128i.patch)
+sha512sums=('SKIP'
+            '2c11570c51fc15fac801aef8f4c57c1d4fcc99c2b69f6bd85288bb82abadcd499d6070128c2f479e6a1134a29dba722678f84db17c5ffbf77816fc93570c3d2f')
 
 pkgver() {
   cd ${pkgname}
@@ -21,6 +23,7 @@ pkgver() {
 
 prepare() {
   sed -i 's|yuvconvert ${JPEG_LIBRARY}|${ly_lib_shared} ${JPEG_LIBRARY}|' ${pkgname}/CMakeLists.txt
+  patch -d ${pkgname} -p1 -i $srcdir/libyuv-m128i.patch
 }
 
 build() {
