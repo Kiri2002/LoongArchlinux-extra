@@ -27,14 +27,14 @@ prepare() {
   # use /usr/lib instead of /usr/libexec: https://gitlab.com/virtio-fs/virtiofsd/-/issues/86
   sed 's/libexec/lib/' -i 50-qemu-$pkgname.json
 
-#  cargo fetch  --target "`uname -m`-unknown-linux-gnu"
+  cargo fetch --locked
 }
 
 build() {
   cd $pkgname-v$pkgver
   export RUSTUP_TOOLCHAIN=stable
   export CARGO_TARGET_DIR=target
-  cargo build --release --all-features
+  cargo build --frozen --release --all-features
 }
 
 check() {
