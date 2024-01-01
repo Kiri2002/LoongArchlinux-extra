@@ -67,16 +67,13 @@ makedepends=(
 )
 source=(
   $url/releases/wpewebkit-$pkgver.tar.xz{,.asc}
-  wpewebkit-la64.patch
   webkit2gtk-fix-cmake-build.patch
 )
 sha256sums=('df99bbc7007df60d77821e4c169312464f145c8aa6e34398a43da36a857285e8'
             'SKIP'
-            'df3f2865f39bb76321a37d9c4255214d032c9b8d25a40e9d8bb69b5b6f6c3279'
             '2ce442337d9f9871170f7face452a965d724a418ecb752be4222cc867b9c0e5e')
 b2sums=('979ab2836f0d9ed8c5b13c65f74f37f04329b4bbc9eac3ca2c3992e1244a73ab2581d70ae2272c9caadf09aff49f59dc43e627edeff0fcedf1d03b9f32600170'
         'SKIP'
-        'b7b91bc37751390dacf568e75a368e8ea160490359f329f867eee43f69c6c7338b5d5970330bb2f04758beadeb089face0a26443d9127174841a465c8d1fdee9'
         '6fa62e8d83678ea8938b1aef0425422354ce5597bad455adca89e7509677edcc7c1a263b0c38057e20ae404a7a2cc3dffe9f411ff9fc29baa5a59ea585d998b6')
 validpgpkeys=(
   'D7FCF61CF9A2DEAB31D81BD3F3D322D0EC4582C3'  # Carlos Garcia Campos <cgarcia@igalia.com>
@@ -85,7 +82,6 @@ validpgpkeys=(
 
 prepare() {
   cd wpewebkit-$pkgver
-#patch -p1 -i $srcdir/wpewebkit-la64.patch
   patch -p1 -i $srcdir/webkit2gtk-fix-cmake-build.patch
 }
 
