@@ -3,7 +3,7 @@
 
 pkgname=pacman-contrib
 pkgver=1.9.1
-pkgrel=1
+pkgrel=2
 pkgdesc='Contributed scripts and tools for pacman systems'
 arch=('loong64' 'x86_64')
 url=https://gitlab.archlinux.org/pacman/pacman-contrib
@@ -15,13 +15,16 @@ optdepends=('diffutils: for pacdiff'
             'mlocate: for pacdiff --locate'
             'sudo: privilege elevation for several scripts'
             'vim: default merge program for pacdiff')
-source=("git+$url.git#tag=v$pkgver")
-b2sums=('SKIP')
+source=("git+$url.git#tag=v$pkgver"
+    pkgbuild-vim-la64.patch)
+b2sums=('SKIP'
+        '2cc52b392ef20be4b32a273c6ba8c7d1616e846e2a00dc846b1238bb5db973d25b8873f1e75ef4e2289a50860ec1b5a86208c35d6699e6cf547116d224cef52e')
 validpgpkeys=('04DC3FB1445FECA813C27EFAEA4F7B321A906AD9') # Daniel M. Capella <polyzen@archlinux.org>
 #             '5134EF9EAF65F95B6BB1608E50FB9B273A9D0BB5')  # Johannes Löthberg <johannes@kyriasis.com>
 
 prepare() {
   cd $pkgname
+  patch -p1 -i $srcdir/pkgbuild-vim-la64.patch
   ./autogen.sh
 }
 
