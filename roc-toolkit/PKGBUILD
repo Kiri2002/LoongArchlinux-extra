@@ -37,12 +37,14 @@ sha512sums=('ac0f18e8a8a60ae9e93f3dcb58e645f31440b6799dac063b246f5320978ac98192b
 b2sums=('6fa38819fc675323585a0bd5f754b7325be0d9870a55b65636498822249fe1d53b23422b7fa6a0b7e7740aff4f7e62fed9b2681741fbd8912ef8ec2bcc375ee4')
 
 build() {
+  CFLAGS=${CFLAGS/-mno-relax/}
+  CXXFLAGS=${CXXFLAGS/-mno-relax/}
+  CFLAGS=${CFLAGS/-fstack-clash-protection/}
+  CXXFLAGS=${CXXFLAGS/-fstack-clash-protection/}
   local scons_options=(
     --prefix=/usr
     --libdir=/usr/lib
     --disable-openssl  # disable as it is not yet used
-    --enable-tests
-    --enable-examples
   )
 
   cd $pkgname-$pkgver
@@ -63,6 +65,10 @@ check() {
 }
 
 package() {
+  CFLAGS=${CFLAGS/-mno-relax/}
+  CXXFLAGS=${CXXFLAGS/-mno-relax/}
+  CFLAGS=${CFLAGS/-fstack-clash-protection/}
+  CXXFLAGS=${CXXFLAGS/-fstack-clash-protection/}
   local scons_options=(
     --prefix=/usr
     --libdir=/usr/lib
