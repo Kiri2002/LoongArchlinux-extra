@@ -23,7 +23,6 @@ makedepends=('cbindgen'
              'imake'
              'inetutils'
              'jack'
-             'lld'
              'llvm'
              'mesa'
              'nasm'
@@ -49,12 +48,23 @@ options=(!emptydirs !makeflags !strip !lto !debug)
 source=(https://archive.mozilla.org/pub/firefox/releases/$pkgver/source/firefox-$pkgver.source.tar.xz{,.asc}
         firefox-install-dir.patch
         "$pkgname".desktop
-        identity-icons-brand.svg)
+        identity-icons-brand.svg
+        0001-Add-support-for-LoongArch64.patch
+        0002-Enable-VA-API-support-for-AMD-GPUs.patch
+        0003-Remove-architectural-limit-on-VA-API-support.patch
+        0004-Enable-WebRTC-for-LoongArch.patch
+        0005-Fix-libyuv-build-with-LSX-LASX.patch)
+
 b2sums=('6169e922d40e509f321dbe91e6bbacb19f069864ce14aa30c76a312299ea07e79ce0ff8b48e7e2e46ce39377462170014389350e2c2530c3a6e5973d47483e14'
         'SKIP'
         'eb61793257458b20bc7ab5598240bc1901666d7fb7e971941af99ac706d387859642d8fba3130fa31789546b9123c7500edbe6373701ce9fc7d65aef3974c90c'
         'dfb74f902b5b7e4533c6dd91bcade3de809751d2c6d991b5c57c831be3d42759e0d416fc90a71977f17036db5f8b49775b483f5f4032d3022533b8b81f8c9e65'
-        '63a8dd9d8910f9efb353bed452d8b4b2a2da435857ccee083fc0c557f8c4c1339ca593b463db320f70387a1b63f1a79e709e9d12c69520993e26d85a3d742e34')
+        '63a8dd9d8910f9efb353bed452d8b4b2a2da435857ccee083fc0c557f8c4c1339ca593b463db320f70387a1b63f1a79e709e9d12c69520993e26d85a3d742e34'
+        'cab0bf0922520866aa9fddf9142512a0ff30437ab779dc4e266b278aea363d4077db5edad11ac30190ee69cc321ec6a7ab3eea8003982faeac991389417af7e9'
+        '19dc9f0e2aa13be99f7226dbf1e80eee67bbce3ac3ed8256894158565d62324589bc075df402bc43f5d597cc2de60bed6d68b58e20e9caa1f34776f680fe45b5'
+        'bb2658edb90dc022df36d89206789ef30222ff1b26376b61b2340d421738fe240063bb7113c9deb828f00e8e297bda8b87e2da9d26796aa7fd4d48bef1aa0719'
+        '65e9739926174b3eecb8e01cae9805861f6a7c2cadf9faef7cda92acbef3a569a31b2e8c0f4f8ab726416a60e601e7a2a4eb1fc6cb74dfd2cb4ab1572c1fdd97'
+        'e2fc795f224f34d14fab2655235a7e31b5fdbe84937ded697f6b1ccd1751bfb3a05ae6b46846201e201487d02a987322f3fc36cdd3208d4904c844caf3f2d628')
 validpgpkeys=('14F26682D0916CDD81E37B6D61B7B526D98F0353') # Mozilla Software Releases <release@mozilla.com>
 
 # Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
@@ -73,6 +83,11 @@ prepare() {
   mkdir mozbuild
   cd firefox-${pkgver%b*}
   patch -Np1 -i ../firefox-install-dir.patch
+  patch -Np1 -i ../0001-Add-support-for-LoongArch64.patch
+  patch -Np1 -i ../0002-Enable-VA-API-support-for-AMD-GPUs.patch
+  patch -Np1 -i ../0003-Remove-architectural-limit-on-VA-API-support.patch
+  patch -Np1 -i ../0004-Enable-WebRTC-for-LoongArch.patch
+  patch -Np1 -i ../0005-Fix-libyuv-build-with-LSX-LASX.patch
 
   echo -n "$_google_api_key" > google-api-key
   echo -n "$_mozilla_api_key" > mozilla-api-key
@@ -86,10 +101,10 @@ ac_add_options --enable-release
 ac_add_options --enable-hardening
 ac_add_options --enable-optimize
 ac_add_options --enable-rust-simd
-ac_add_options --enable-linker=lld
-ac_add_options --disable-elf-hack
+#ac_add_options --enable-linker=lld
+#ac_add_options --disable-elf-hack
 ac_add_options --disable-bootstrap
-ac_add_options --with-wasi-sysroot=/usr/share/wasi-sysroot
+ac_add_options --without-wasm-sandboxed-libraries
 
 # Branding
 ac_add_options --with-branding=browser/branding/aurora
@@ -113,7 +128,7 @@ ac_add_options --with-system-nss
 # Features
 ac_add_options --enable-alsa
 ac_add_options --enable-jack
-ac_add_options --enable-crashreporter
+ac_add_options --disable-crashreporter
 ac_add_options --disable-updater
 ac_add_options --disable-tests
 END
@@ -126,6 +141,11 @@ build() {
   export MOZBUILD_STATE_PATH="$srcdir/mozbuild"
   export MOZ_ENABLE_FULL_SYMBOLS=1
   export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="pip"
+# clang didn't support -mlsx
+  CFLAGS=${CFLAGS/-mlsx /}
+  CXXFLAGS=${CXXFLAGS/-mlsx /}
+  CFLAGS=${CFLAGS/-fstack-clash-protection/}
+  CXXFLAGS=${CXXFLAGS/-fstack-clash-protection/}
 
   # malloc_usable_size is used in various parts of the codebase
   CFLAGS="${CFLAGS/_FORTIFY_SOURCE=3/_FORTIFY_SOURCE=2}"
@@ -136,35 +156,36 @@ build() {
 
   # Do 3-tier PGO
   echo "Building instrumented browser..."
-  cat >.mozconfig ../mozconfig - <<END
-ac_add_options --enable-profile-generate=cross
-END
+  cp ../mozconfig .mozconfig
+#  cat >.mozconfig ../mozconfig - <<END
+#ac_add_options --enable-profile-generate=cross
+#END
   ./mach build
 
   echo "Profiling instrumented browser..."
   ./mach package
-  LLVM_PROFDATA=llvm-profdata \
-    JARLOG_FILE="$PWD/jarlog" \
-    xvfb-run -s "-screen 0 1920x1080x24 -nolisten local" \
-    ./mach python build/pgo/profileserver.py
-
-  stat -c "Profile data found (%s bytes)" merged.profdata
-  test -s merged.profdata
-
-  stat -c "Jar log found (%s bytes)" jarlog
-  test -s jarlog
-
-  echo "Removing instrumented browser..."
-  ./mach clobber
-
-  echo "Building optimized browser..."
-  cat >.mozconfig ../mozconfig - <<END
-ac_add_options --enable-lto=cross
-ac_add_options --enable-profile-use=cross
-ac_add_options --with-pgo-profile-path=${PWD@Q}/merged.profdata
-ac_add_options --with-pgo-jarlog=${PWD@Q}/jarlog
-END
-  ./mach build
+#  LLVM_PROFDATA=llvm-profdata \
+#    JARLOG_FILE="$PWD/jarlog" \
+#    xvfb-run -s "-screen 0 1920x1080x24 -nolisten local" \
+#    ./mach python build/pgo/profileserver.py
+#
+#  stat -c "Profile data found (%s bytes)" merged.profdata
+#  test -s merged.profdata
+#
+#  stat -c "Jar log found (%s bytes)" jarlog
+#  test -s jarlog
+#
+#  echo "Removing instrumented browser..."
+#  ./mach clobber
+#
+#  echo "Building optimized browser..."
+#  cat >.mozconfig ../mozconfig - <<END
+#ac_add_options --enable-lto=cross
+#ac_add_options --enable-profile-use=cross
+#ac_add_options --with-pgo-profile-path=${PWD@Q}/merged.profdata
+#ac_add_options --with-pgo-jarlog=${PWD@Q}/jarlog
+#END
+#  ./mach build
 
   echo "Building symbol archive..."
   ./mach buildsymbols
@@ -247,10 +268,10 @@ ObjectPath=/org/mozilla/${pkgname//-/}/SearchProvider
 Version=2
 END
 
-  export SOCORRO_SYMBOL_UPLOAD_TOKEN_FILE="$startdir/.crash-stats-api.token"
-  if [[ -f $SOCORRO_SYMBOL_UPLOAD_TOKEN_FILE ]]; then
-    make -C obj uploadsymbols
-  else
-    cp -fvt "$startdir" obj/dist/*crashreporter-symbols-full.tar.zst
-  fi
+#  export SOCORRO_SYMBOL_UPLOAD_TOKEN_FILE="$startdir/.crash-stats-api.token"
+#  if [[ -f $SOCORRO_SYMBOL_UPLOAD_TOKEN_FILE ]]; then
+#    make -C obj uploadsymbols
+#  else
+#    cp -fvt "$startdir" obj/dist/*crashreporter-symbols-full.tar.zst
+#  fi
 }
