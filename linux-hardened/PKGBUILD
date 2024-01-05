@@ -4,8 +4,8 @@
 # Contributor: Thomas Baechler <thomas@archlinux.org>
 
 pkgbase=linux-hardened
-_ver=6.6.0
-_rdate=20231013
+_ver=6.7.0
+_rdate=20231226
 pkgver=${_ver}.hardened1
 pkgrel=1
 pkgdesc='Security-Hardened Linux'
@@ -36,7 +36,6 @@ source=(
   https://github.com/loongarchlinux/linux/releases/download/v${_rdate}/linux-${_ver}-${_rdate}.tar.xz
   config         # the main kernel config file
   config.la64
-  remove_shm_align_mask.diff
 )
 validpgpkeys=(
   ABAF11C65A2970B130ABE3C479BE3E4300411886  # Linus Torvalds
@@ -44,14 +43,12 @@ validpgpkeys=(
   E240B57E2C4630BA768E2F26FC1B547C8D8172C8  # Levente Polyak
 )
 # https://www.kernel.org/pub/linux/kernel/v6.x/sha256sums.asc
-sha256sums=('5f92d37f6b00df86642b251cf8c98e14326712825e71b69b4531bed6abb48d52'
-            '77272c9a1a1a50ea637f13f4dfa079cdf2db36d712e675a694c843b354bedf23'
-            '8c32b233a16d437dc7ae6f1551256375090ecc7b18ec2151714b6bfb731f5cbf'
-            'c625401b90b1fad013ac800116bb7b7a320be7ab5fdf39f7f70be5a23de9ad34')
-b2sums=('1ce30a8105b5e73eb3c5c2e5cfb2b09a5fdb57515d244145dda80defb1634bcdc9fb649ecc9bebc4dcbcd7ced09c110c0a6432a984f76ccb861517ae14c7be56'
-        '2e43bf488f84d8211bafa23bc46c798caec4c735b1fd8927e38953d089a5f986ff10bafdeecf935e51e94789eb0a9b39d74abcf15dd4d213a34eb8e9a85a531a'
-        'f5a3cfa497b4631427b936871669a6bd674df3569059bfcf488d6be097d035fdaf6de2cac006252b379a00235d501c35815f0c49fc79c0a57cc53c171cd25e20'
-        'b1ef46cc74704a995c7252d655817f1b54d67ea6b23705e42df9db5941de6bd269e5958cf1747163b9b43f4c6a1d56797c4ed2117ac5490f99fbc7aa8a45ed66')
+sha256sums=('d0e6ce60f0ccd162aabe130c00509590de790e33642a12ed4249aa08ac14f674'
+            '46a1e0e43247d09c5ae29cfa7a79e272767a49b90c5761c2e4a5656a4ced6cf2'
+            'c9b26d463e27257d6ad13e59d489db5bd9b103e506dc80d7917bf48471480c85')
+b2sums=('15b6b33c6fdac5329d56424afc09a722053f045ca1a1553d583d80296a20a3e545d6ac1fd7950e575816df3e2d1c1033aeba779aa374ee25406f05d284d56815'
+        '914edb986d34ddaa20738ec6d4f0d68b2500ee4662be3f58c1f62ecfa87f3ab88205acf91ec7d03d2f925880d538d0b1716183add857d2bff533e5a0d0596ba5'
+        'd285dfd1304c9bc42f9fdaa18f8a393fc599be5d6144abe43959c8f63de7b8973821c50135ce81764428659ddd0eb634d7cce6da697cab9752311ad05dee2df6')
 
 export KBUILD_BUILD_HOST=archlinux
 export KBUILD_BUILD_USER=$pkgbase
@@ -73,7 +70,6 @@ prepare() {
     echo "Applying patch $src..."
     patch -Np1 < "../$src"
   done
-  patch -R -p1 -i $srcdir/remove_shm_align_mask.diff
 
   echo "Setting config..."
   cp ../config.la64 .config
@@ -104,7 +100,6 @@ _package() {
   optdepends=(
     'wireless-regdb: to set the correct wireless channels of your country'
     'linux-firmware: firmware images needed for some devices'
-    'usbctl: deny_new_usb control'
   )
   provides=(
     KSMBD-MODULE
@@ -149,6 +144,7 @@ _package-headers() {
   elif [ $CARCH == loong64 ];then
     install -Dt "$builddir/arch/loongarch" -m644 arch/loongarch/Makefile
   fi
+
   cp -t "$builddir" -a scripts
 
   # required when STACK_VALIDATION is enabled
@@ -160,11 +156,13 @@ _package-headers() {
   echo "Installing headers..."
   cp -t "$builddir" -a include
   if [ $CARCH == x86_64 ];then
-      cp -t "$builddir/arch/x86" -a arch/x86/include
-      install -Dt "$builddir/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
+    cp -t "$builddir/arch/x86" -a arch/x86/include
+    install -Dt "$builddir/arch/x86/kernel" -m644 arch/x86/kernel/asm-offsets.s
   elif [ $CARCH == loong64 ];then
-      cp -t "$builddir/arch/loongarch" -a arch/loongarch/include
+    cp -t "$builddir/arch/loongarch" -a arch/loongarch/include
+    install -Dt "$builddir/arch/loongarch/kernel" -m644 arch/loongarch/kernel/asm-offsets.s
   fi
+
 
   install -Dt "$builddir/drivers/md" -m644 drivers/md/*.h
   install -Dt "$builddir/net/mac80211" -m644 net/mac80211/*.h
