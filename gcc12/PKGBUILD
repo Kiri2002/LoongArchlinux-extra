@@ -179,6 +179,7 @@ package_gcc12() {
 
   make -C $CHOST/libgcc DESTDIR="$pkgdir" install
   rm -f "$pkgdir"/usr/lib/libgcc_s.so*
+  rm -f "$pkgdir"/usr/lib/gcc/loongarch64-unknown-linux-gnu/12.3.0/libgcc_s.so*
 
   make -C $CHOST/libstdc++-v3/src DESTDIR="$pkgdir" install
   make -C $CHOST/libstdc++-v3/include DESTDIR="$pkgdir" install
