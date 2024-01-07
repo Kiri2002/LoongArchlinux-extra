@@ -3,7 +3,7 @@
 # Contributor: Douglas Soares de Andrade <douglas@archlinux.org>
 
 pkgname=avahi
-pkgver=0.8+r189+g35bb1ba
+pkgver=0.8+r189+g35bb1bae
 pkgrel=1
 epoch=1
 pkgdesc="Service Discovery for Linux using mDNS/DNS-SD (compatible with Bonjour)"
