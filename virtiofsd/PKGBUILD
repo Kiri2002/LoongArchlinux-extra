@@ -2,7 +2,7 @@
 
 pkgname=virtiofsd
 pkgver=1.8.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Vhost-user virtio-fs device backend written in Rust"
 arch=(loong64 x86_64)
 url="https://gitlab.com/virtio-fs/virtiofsd"
