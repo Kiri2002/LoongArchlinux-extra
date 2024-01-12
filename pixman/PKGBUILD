@@ -4,18 +4,25 @@
 
 pkgname=pixman
 pkgver=0.42.2
-pkgrel=1
+pkgrel=2
 pkgdesc="The pixel-manipulation library for X and cairo"
 arch=(loong64 x86_64)
 url="https://cgit.freedesktop.org/pixman/"
 license=('custom')
 depends=('glibc')
 makedepends=('meson' 'libpng')
-options=('debug')
+options=('debug' !lto)
 provides=('libpixman-1.so')
-source=(https://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.xz)
-sha512sums=('3476e2676e66756b1af61b1e532cd80c985c191fb7956eb01702b419726cce99e79163b7f287f74f66414680e7396d13c3fee525cd663f12b6ac4877070ff4e8')
+source=(https://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.xz
+    83.patch)
+sha512sums=('3476e2676e66756b1af61b1e532cd80c985c191fb7956eb01702b419726cce99e79163b7f287f74f66414680e7396d13c3fee525cd663f12b6ac4877070ff4e8'
+            '0b7970cd955e31211fa55882974bbb321b0e7421da5c06a2cff196ea3e0efcefce50b4ba5f19a23417aaea2145529c762800dbb5887dfdcfa240efe400d44f7f')
 #validpgpkeys=('') # Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+
+prepare() {
+  cd "$pkgname-$pkgver"
+  patch -p1 -i "$srcdir/83.patch"
+}
 
 build() {
   arch-meson $pkgbase-$pkgver build \
@@ -27,6 +34,9 @@ build() {
     -D iwmmxt=disabled \
     -D mips-dspr2=disabled \
     -D gtk=disabled \
+    -D lsx=enabled \
+    -D lasx=enabled \
+    -D b_lto=false \
     -D mmx=disabled \
     -D ssse3=disabled \
     -D sse2=disabled
