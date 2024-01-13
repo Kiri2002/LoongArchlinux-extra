@@ -4,7 +4,7 @@
 
 pkgname=pixman
 pkgver=0.42.2
-pkgrel=2
+pkgrel=3
 pkgdesc="The pixel-manipulation library for X and cairo"
 arch=(loong64 x86_64)
 url="https://cgit.freedesktop.org/pixman/"
@@ -35,7 +35,6 @@ build() {
     -D mips-dspr2=disabled \
     -D gtk=disabled \
     -D lsx=enabled \
-    -D lasx=enabled \
     -D b_lto=false \
     -D mmx=disabled \
     -D ssse3=disabled \
